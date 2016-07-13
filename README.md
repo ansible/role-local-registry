@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ansible/role-local-registry.svg?branch=master)](https://travis-ci.org/ansible/role-local-registry)
+
 Create Local Registry 
 =====================
 
@@ -106,7 +108,7 @@ License
 
 MIT
 
-Authors
--------
+Contributors
+------------
 
 [@chouseknecht](https://github.com/chouseknecht)
