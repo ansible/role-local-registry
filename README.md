@@ -13,6 +13,7 @@ Requirements
 
 Role Variables
 --------------
+
 registry_name
 > Name of the container running the registry service. Defaults to *registry*.
 
