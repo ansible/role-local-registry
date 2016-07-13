@@ -1,7 +1,3 @@
-
-script:
-
-
 sudo: required
 dist: trusty
 language: python
@@ -38,4 +34,3 @@ script:
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
-
