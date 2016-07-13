@@ -1,0 +1,25 @@
+- name: Remove registry, if it exists
+  docker_container:
+    name: "{{ registry_name }}"
+    state: absent
+
+- include: encrypt.yml
+  with_items: "{{ registry_users }}" 
+  
+- name: Recreate secure docker registry
+  docker_container:
+    name: "{{ registry_name }}" 
+    image: registry:2
+    volumes:
+      - "{{ registry_cert_path }}:/certs"
+      - "{{ registry_auth_path }}:/auth"
+    env:
+      REGISTRY_HTTP_TLS_CERTIFICATE: "/certs/{{ registry_cert_file }}"
+      REGISTRY_HTTP_TLS_KEY: "/certs/{{ registry_key_file }}"
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: "Registry Realm"
+      REGISTRY_AUTH_HTPASSWD_PATH: "/auth/{{ registry_auth_file }}"
+    ports:
+      - "{{ registry_port }}:{{ registry_port }}"
+  register: output
+

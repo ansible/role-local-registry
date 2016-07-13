@@ -1,0 +1,14 @@
+---
+registry_name: registry
+registry_auth_path: "{{ role_path }}/files/auth"
+registry_cert_path: "{{ role_path }}/files/certs"
+registry_cert_file: domain.crt
+registry_key_file: domain.key
+registry_auth_file: htpasswd 
+registry_port: 5000
+registry_users:
+  - username: testuser 
+    password: testpassword
+  - username: testuser2
+    password: testpassword2
+registry_host: localhost
