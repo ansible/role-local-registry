@@ -1,0 +1,3 @@
+*.retry
+*.log
+files/auth/htpasswd
