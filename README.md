@@ -40,10 +40,13 @@ registry_users
 registry_host:
 > The hostname or IP address. Defaults to *localhost*.
 
+registry_create_certs
+> Generate self-signed certificates. Defaults to *true*.
+
 Example Playbook
 ----------------
 
-Below is an example playbook that stands up a registry and then makes some assertions. It tests that the registry is running and users can actuall authenticate.
+Below is an example playbook that stands up a registry and then makes some assertions, testing that the registry is running and users can actually authenticate.
 
 ```
 #

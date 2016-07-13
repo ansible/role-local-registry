@@ -3,6 +3,10 @@
     name: "{{ registry_name }}"
     state: absent
 
+- name: Generate fresh certs
+  command: openssl req -newkey rsa:4096 -nodes -sha256 -keyout "{{ registry_cert_path }}/{{ registry_key_file }}" -x509 -days 365 -subj '/CN={{ registry_host }}' -out "{{ registry_cert_path }}/{{ registry_cert_file }}"
+  when: registry_create_certs
+
 - include: encrypt.yml
   with_items: "{{ registry_users }}" 
   
