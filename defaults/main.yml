@@ -7,7 +7,8 @@ registry_cert_file: domain.crt
 registry_key_file: domain.key
 registry_host_cert_path: "{{ registry_cert_path }}"
 registry_host_auth_path: "{{ registry_auth_path }}"
-registry_port: 5000
+registry_host_port: 5000
+registry_container_port: 5000
 registry_users:
   - username: testuser 
     password: testpassword

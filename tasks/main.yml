@@ -24,6 +24,6 @@
       REGISTRY_AUTH_HTPASSWD_REALM: "Registry Realm"
       REGISTRY_AUTH_HTPASSWD_PATH: "/auth/{{ registry_auth_file }}"
     ports:
-      - "{{ registry_port }}:{{ registry_port }}"
+      - "{{ registry_host_port }}:{{ registry_container_port }}"
   register: output
 
