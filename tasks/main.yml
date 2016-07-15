@@ -15,8 +15,8 @@
     name: "{{ registry_name }}" 
     image: registry:2
     volumes:
-      - "{{ registry_cert_path }}:/certs"
-      - "{{ registry_auth_path }}:/auth"
+      - "{{ registry_host_cert_path }}:/certs"
+      - "{{ registry_host_auth_path }}:/auth"
     env:
       REGISTRY_HTTP_TLS_CERTIFICATE: "/certs/{{ registry_cert_file }}"
       REGISTRY_HTTP_TLS_KEY: "/certs/{{ registry_key_file }}"
