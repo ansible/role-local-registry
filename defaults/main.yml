@@ -16,3 +16,4 @@ registry_users:
     password: testpassword2
 registry_host: localhost
 registry_create_certs: yes
+registry_altname:

@@ -3,9 +3,31 @@
     name: "{{ registry_name }}"
     state: absent
 
-- name: Generate fresh certs
-  command: openssl req -newkey rsa:4096 -nodes -sha256 -keyout "{{ registry_cert_path }}/{{ registry_key_file }}" -x509 -days 365 -subj '/CN={{ registry_host }}' -out "{{ registry_cert_path }}/{{ registry_cert_file }}"
-  when: registry_create_certs
+- name: Generate fresh cert
+  command: >
+    openssl req
+    -newkey rsa:4096
+    -nodes
+    -sha256
+    -keyout "{{ registry_cert_path }}/{{ registry_key_file }}"
+    -x509
+    -days 365
+    -subj '/CN={{ registry_host }}'
+    -out "{{ registry_cert_path }}/{{ registry_cert_file }}"
+  when: "registry_create_certs and not registry_altname"
+
+- name: Generate fresh cert with alternate name
+  command: >
+    openssl req
+    -newkey rsa:4096
+    -nodes
+    -sha256
+    -keyout "{{ registry_cert_path }}/{{ registry_key_file }}"
+    -x509
+    -days 365
+    -subj '/CN={{ registry_host }}/subjectAltName={{ registry_altname }}'
+    -out "{{ registry_cert_path }}/{{ registry_cert_file }}"
+  when: "registry_create_certs and registry_altname"
 
 - include: encrypt.yml
   with_items: "{{ registry_users }}" 
