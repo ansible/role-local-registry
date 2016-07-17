@@ -4,5 +4,5 @@ registry_users:
     password: testpassword
   - username: testuser1
     password: testpassword2
-registry_host: localhost
+registry_common_name: localhost
 registry_port: 5000

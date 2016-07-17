@@ -1,9 +1,48 @@
+- name: Set host_ip 
+  hosts: localhost
+  connection: local
+  gather_facts: yes 
+  tasks:
+    - name: Check for Docker machine name 
+      set_fact:
+        docker_machine_name: "{{ lookup('env','DOCKER_MACHINE_NAME') | default('NONE') }}" 
+
+    - name: Get Docker Machine IP
+      command: >
+        docker-machine ip default        
+      register: output
+      when: docker_machine_name != 'NONE'
+
+    - name: Set host_ip to Docker machine IP
+      set_fact:
+        host_ip: "{{ output.stdout }}"
+      when: docker_machine_name != 'NONE' 
+
+    - name: Set host_ip to the host 
+      set_fact: 
+        host_ip: "{{ ansible_default_ipv4.address }}"
+      when: docker_machine_name == 'NONE'
+
+- name: Add common name to /etc/hosts
+  hosts: localhost
+  connection: local
+  gather_facts: no 
+  become: yes
+  tasks:
+    - name: Add common name to /etc/hosts
+      lineinfile:
+        dest: /etc/hosts
+        line: "{{ host_ip }}    {{registry_common_name }}" 
+ 
 - name: Test role-local-registry 
   hosts: localhost
   connection: local
   gather_facts: no
   roles:
     - role: role-local-registry
+      registry_altnames:
+        - type: IP.1
+          name: "{{ host_ip }}"
 
 - name: Test the registry
   hosts: localhost
@@ -19,9 +58,17 @@
         that:
           - container_state.stdout == 'true' 
           - 
-    - name: Authenticate each user with the registry
+    - name: Authenticate each user using common name
       docker_login:
-        registry_url: "{{ registry_host }}:{{ registry_port }}"
+        registry_url: "https://{{ registry_common_name}}:{{ registry_port }}"
         username: "{{ item.username }}"
         password: "{{ item.password }}"
       with_items: "{{ registry_users }}"
+
+    - name: Authenticate each user using host ip 
+      docker_login:
+        registry_url: "https://{{ host_ip }}:5000"
+        username: "{{ item.username }}"
+        password: "{{ item.password }}"
+      with_items: "{{ registry_users }}"
+      when: docker_machine_name == 'NONE'

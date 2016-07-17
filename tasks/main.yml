@@ -3,31 +3,38 @@
     name: "{{ registry_name }}"
     state: absent
 
-- name: Generate fresh cert
-  command: >
-    openssl req
-    -newkey rsa:4096
-    -nodes
-    -sha256
-    -keyout "{{ registry_cert_path }}/{{ registry_key_file }}"
-    -x509
-    -days 365
-    -subj '/CN={{ registry_host }}'
-    -out "{{ registry_cert_path }}/{{ registry_cert_file }}"
-  when: "registry_create_certs and not registry_altname"
+- name: Copy template
+  template: src=request.conf.j2 dest="{{ registry_cert_path }}/request.conf"
+  when: registry_create_certs
 
-- name: Generate fresh cert with alternate name
+- name: Create key
+  command: openssl genrsa -out "{{ registry_cert_path }}/{{ registry_key_file }}" 4096 
+  when: registry_create_certs
+
+- name: Create certificate signing request
   command: >
-    openssl req
-    -newkey rsa:4096
-    -nodes
-    -sha256
-    -keyout "{{ registry_cert_path }}/{{ registry_key_file }}"
-    -x509
-    -days 365
-    -subj '/CN={{ registry_host }}/subjectAltName={{ registry_altname }}'
-    -out "{{ registry_cert_path }}/{{ registry_cert_file }}"
-  when: "registry_create_certs and registry_altname"
+     openssl req 
+     -new 
+     -out "{{ registry_cert_path }}/request.csr"
+     -key "{{ registry_cert_path }}/{{ registry_key_file }}"
+     -config request.conf
+  args:
+    chdir: "{{ registry_cert_path }}" 
+  when: registry_create_certs
+
+- name: Sign the request
+  command: >
+     openssl x509
+     -req
+     -days 3650
+     -in "{{ registry_cert_path }}/request.csr"
+     -signkey "{{ registry_cert_path }}/{{ registry_key_file }}" 
+     -out "{{ registry_cert_path }}/{{ registry_cert_file }}"
+     -extensions v3_req 
+     -extfile request.conf    
+  args:
+    chdir: "{{ registry_cert_path }}" 
+  when: registry_create_certs
 
 - include: encrypt.yml
   with_items: "{{ registry_users }}" 
