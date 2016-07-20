@@ -22,8 +22,8 @@ registry_province: NC
 registry_locality: Durham
 registry_organization: Acme, Inc.
 registry_organizational_unit: Widgets
-registry_common_name: myregistrydomain.com 
+registry_common_name: localhost 
 
 registry_altnames:
-   - type: IP.1
-     name: 127.0.0.1 
+  - type: IP.1
+    name: 127.0.0.1 
