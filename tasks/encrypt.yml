@@ -2,9 +2,17 @@
   docker_container:
     name: htpasswd
     image: registry:2
-    entrypoint: htpasswd -Bbn {{ item.username }} {{ item.password }}
+    command: /usr/bin/htpasswd -Bbn "{{ item.username }}" "{{ item.password }}"
     detach: false
+  register: htpasswdOutput
+
+- name: get output
+  shell: cat "{{ansible_docker_container.LogPath}}"
+  become: true
   register: output
+
+- set_fact:
+    line: "{{output.stdout_lines[-2]}}"
 
 - name: Create file, if it does not exist
   file:
@@ -20,4 +28,4 @@
 - name: Add user to password file
   lineinfile:
     dest: "{{ registry_auth_path }}/{{ registry_auth_file }}"
-    line: "{{ ansible_docker_container.Output | replace('\n', '') }}"
+    line: "{{ line.log | replace('\n', '') }}"
